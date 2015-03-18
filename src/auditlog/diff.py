@@ -46,12 +46,16 @@ def model_instance_diff(old, new, **kwargs):
 
     for field in fields:
         try:
-            old_value = unicode(getattr(old, field.name, None))
+            old_value = getattr(old, field.name, None)
+            if type(getattr(old, field.name, None)) is not dict:
+                old_value = unicode(old_value)
         except ObjectDoesNotExist:
             old_value = None
 
         try:
-            new_value = unicode(getattr(new, field.name, None))
+            new_value = getattr(new, field.name, None)
+            if type(getattr(new, field.name, None)) is not dict:
+                new_value = unicode(new_value)
         except ObjectDoesNotExist:
             new_value = None
 
@@ -59,7 +63,6 @@ def model_instance_diff(old, new, **kwargs):
         if old_value == 'None' and new_value == '':
             continue
 
-        old_value = old_value.replace('u\'', '\'')
         if old_value != new_value:
             diff[field.name] = (old_value, new_value)
 
