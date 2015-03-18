@@ -1,3 +1,4 @@
+import ast
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Model
 
@@ -53,6 +54,14 @@ def model_instance_diff(old, new, **kwargs):
             new_value = unicode(getattr(new, field.name, None))
         except ObjectDoesNotExist:
             new_value = None
+
+        # Generic IPAddress field stores empty string as None
+        if old_value == 'None' and new_value == '':
+            continue
+
+        # JSONField stores dictionary keys as unicode strings
+        if cmp(ast.literal_eval(old_value), ast.literal_eval(new_value)) == 0:
+            continue
 
         if old_value != new_value:
             diff[field.name] = (old_value, new_value)
