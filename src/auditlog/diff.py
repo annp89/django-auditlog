@@ -59,7 +59,7 @@ def model_instance_diff(old, new, **kwargs):
         if old_value == 'None' and new_value == '':
             continue
 
-        old_value.replace('u\'', '\'')
+        old_value = old_value.replace('u\'', '\'')
         if old_value != new_value:
             diff[field.name] = (old_value, new_value)
 
