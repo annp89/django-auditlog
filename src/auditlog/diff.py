@@ -60,8 +60,11 @@ def model_instance_diff(old, new, **kwargs):
             continue
 
         # JSONField stores dictionary keys as unicode strings
-        if cmp(ast.literal_eval(old_value), ast.literal_eval(new_value)) == 0:
-            continue
+        try:
+            if cmp(ast.literal_eval(old_value), ast.literal_eval(new_value)) == 0:
+                continue
+        except (SyntaxError, ValueError) as e:
+            pass
 
         if old_value != new_value:
             diff[field.name] = (old_value, new_value)
