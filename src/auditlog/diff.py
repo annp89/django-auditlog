@@ -47,23 +47,23 @@ def model_instance_diff(old, new, **kwargs):
     for field in fields:
         try:
             old_value = getattr(old, field.name, None)
-            if type(getattr(old, field.name, None)) is not dict:
-                old_value = unicode(old_value)
         except ObjectDoesNotExist:
             old_value = None
+        else:
+            old_value = unicode(old_value) if type(old_value) is not dict else old_value
 
         try:
             new_value = getattr(new, field.name, None)
-            if type(getattr(new, field.name, None)) is not dict:
-                new_value = unicode(new_value)
         except ObjectDoesNotExist:
             new_value = None
+        else:
+            new_value = unicode(new_value) if type(new_value) is not dict else new_value
 
         # Generic IPAddress field stores empty string as None
         if old_value == 'None' and new_value == '':
             continue
 
-        if old_value != new_value:
+        if cmp(old_value, new_value) != 0:
             diff[field.name] = (old_value, new_value)
 
     if len(diff) == 0:
