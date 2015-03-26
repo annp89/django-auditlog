@@ -10,7 +10,7 @@ class AuditLogModelRegistry(object):
     """
 
     def __init__(self, create=True, update=True, delete=True, custom=None):
-        self._registry = {}
+        self._registry = []
         self._signals = {}
 
         if create:
