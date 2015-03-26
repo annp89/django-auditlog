@@ -1,6 +1,8 @@
 from django.db.models.signals import pre_save, post_save, post_delete
 from django.db.models import Model
 
+from auditlog.receivers import log_create, log_update, log_delete
+
 
 class AuditLogModelRegistry(object):
     """
@@ -8,7 +10,6 @@ class AuditLogModelRegistry(object):
     """
 
     def __init__(self, create=True, update=True, delete=True, custom=None):
-        from auditlog.receivers import log_create, log_update, log_delete
         self._registry = {}
         self._signals = {}
 
@@ -22,19 +23,12 @@ class AuditLogModelRegistry(object):
         if custom is not None:
             self._signals.update(custom)
 
-    def register(self, model, **kwargs):
+    def register(self, model):
         """
         Register a model with auditlog. Auditlog will then track mutations on this model's instances.
-
-        Kwargs:
-          - `include_fields`: list of field names to include in diff
-          - `exclude_fields`: list of field names to exclude in diff
         """
         if issubclass(model, Model):
-            self._registry[model] = {
-                'include_fields': kwargs.get('include_fields', []),
-                'exclude_fields': kwargs.get('exclude_fields', []),
-            }
+            self._registry.append(model)
             self._connect_signals(model)
         else:
             raise TypeError('Supplied model is not a valid model.')
@@ -50,7 +44,7 @@ class AuditLogModelRegistry(object):
         Unregister a model with auditlog. This will not affect the database.
         """
         try:
-            del self._registry[model]
+            self._registry.pop(model)
         except KeyError:
             pass
         else:
