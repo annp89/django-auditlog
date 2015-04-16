@@ -71,10 +71,5 @@ class AuditLogModelRegistry(object):
         """
         return (self.__class__, model, signal)
 
-    def get_model_fields(self, model):
-        return {
-            'include_fields': self._registry[model]['include_fields'],
-            'exclude_fields': self._registry[model]['exclude_fields'],
-        }
 
 auditlog = AuditLogModelRegistry()
