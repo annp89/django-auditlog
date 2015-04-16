@@ -116,7 +116,7 @@ class LogEntry(models.Model):
     changes = models.TextField(blank=True, verbose_name=_("change message"))
     actor = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True, on_delete=models.SET_NULL, related_name='+', verbose_name=_("actor"))
     timestamp = models.DateTimeField(auto_now_add=True, verbose_name=_("timestamp"))
-    detailed_object_repr = JSONField(blank=True, default=[], null=True)
+    detailed_object_repr = JSONField(blank=True, null=True)
 
     objects = LogEntryManager()
 
